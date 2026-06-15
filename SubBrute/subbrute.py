@@ -23,6 +23,31 @@ def resolve_subdomain(subdomain, domain, timeout=5):
         pass
     return None
 
+def run_subbrute(domain, wordlist_path, threads=50, timeout=5):
+    """
+    Run subdomain enumeration and return list of (subdomain, ip) tuples.
+    """
+    try:
+        with open(wordlist_path, 'r') as f:
+            subdomains = [line.strip() for line in f if line.strip()]
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Wordlist file '{wordlist_path}' not found.")
+    except Exception as e:
+        raise Exception(f"Error reading wordlist: {e}")
+
+    found = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=threads) as executor:
+        future_to_subdomain = {
+            executor.submit(resolve_subdomain, sub, domain, timeout): sub
+            for sub in subdomains
+        }
+        for future in concurrent.futures.as_completed(future_to_subdomain):
+            result = future.result()
+            if result:
+                fqdn, ip = result
+                found.append((fqdn, ip))
+    return found
+
 def main():
     parser = argparse.ArgumentParser(description="Brute-force subdomain enumeration.")
     parser.add_argument("-d", "--domain", required=True, help="Target domain (e.g., example.com)")
@@ -32,31 +57,17 @@ def main():
     args = parser.parse_args()
 
     try:
-        with open(args.wordlist, 'r') as f:
-            subdomains = [line.strip() for line in f if line.strip()]
-    except FileNotFoundError:
-        print(f"Error: Wordlist file '{args.wordlist}' not found.")
-        sys.exit(1)
+        found = run_subbrute(args.domain, args.wordlist, args.threads, args.timeout)
     except Exception as e:
-        print(f"Error reading wordlist: {e}")
+        print(f"Error: {e}")
         sys.exit(1)
 
     print(f"[+] Starting subdomain enumeration for {args.domain}")
-    print(f"[+] Using wordlist: {args.wordlist} ({len(subdomains)} entries)")
+    print(f"[+] Using wordlist: {args.wordlist} ({len([line.strip() for line in open(args.wordlist) if line.strip()])} entries)")
     print(f"[+] Threads: {args.threads}, Timeout: {args.timeout}s\n")
 
-    found = []
-    with concurrent.futures.ThreadPoolExecutor(max_workers=args.threads) as executor:
-        future_to_subdomain = {
-            executor.submit(resolve_subdomain, sub, args.domain, args.timeout): sub
-            for sub in subdomains
-        }
-        for future in concurrent.futures.as_completed(future_to_subdomain):
-            result = future.result()
-            if result:
-                fqdn, ip = result
-                print(f"[+] Found: {fqdn} -> {ip}")
-                found.append((fqdn, ip))
+    for fqdn, ip in found:
+        print(f"[+] Found: {fqdn} -> {ip}")
 
     print(f"\n[+] Enumeration complete. Found {len(found)} subdomains.")
     if found:

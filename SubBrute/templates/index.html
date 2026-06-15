@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubBrute Web UI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { padding-top: 4rem; }
+        .result-box { margin-top: 2rem; padding: 1rem; border: 1px solid #dee2e6; border-radius: .25rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">SubBrute Web Interface</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Target Domain</label>
+                    <input type="text" class="form-control" name="domain" placeholder="example.com" required>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Wordlist File</label>
+                    <input class="form-control" type="file" name="wordlist">
+                    <small class="text-muted">If not provided, uses default wordlist.txt</small>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Threads</label>
+                    <input type="number" class="form-control" name="threads" value="50" min="1">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Timeout (s)</label>
+                    <input type="number" class="form-control" name="timeout" value="5" min="1">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-4">Start Enumeration</button>
+        </form>
+
+        {% if results %}
+        <div class="result-box">
+            <h3>Results</h3>
+            <p><strong>Domain:</strong> {{ domain }}</p>
+            <p><strong>Wordlist:</strong> {{ wordlist_name }}</p>
+            <p><strong>Threads:</strong> {{ threads }}, <strong>Timeout:</strong> {{ timeout }}s</p>
+            <p><strong>Found:</strong> {{ results|length }} subdomains</p>
+            {% if results %}
+            <table class="table table-sm table-bordered mt-3">
+                <thead class="table-light">
+                    <tr>
+                        <th>Subdomain</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subdomain, ip in results %}
+                    <tr>
+                        <td>{{ subdomain }}</td>
+                        <td>{{ ip }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div class="alert alert-danger mt-4">{{ error }}</div>
+        {% endif %}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
