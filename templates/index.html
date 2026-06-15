@@ -6,8 +6,72 @@
     <title>SubBrute Web UI</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { padding-top: 4rem; }
-        .result-box { margin-top: 2rem; padding: 1rem; border: 1px solid #dee2e6; border-radius: .25rem; }
+        body {
+            background-color: #000;
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            padding-top: 4rem;
+            text-shadow: 0 0 5px #0f0;
+        }
+        h1, h3, label, p, .form-label {
+            text-shadow: 0 0 5px #0f0;
+        }
+        .container {
+            max-width: 800px;
+        }
+        .form-control {
+            background-color: #000;
+            color: #0f0;
+            border: 1px solid #0f0;
+            border-radius: 0;
+            box-shadow: 0 0 5px #0f0;
+        }
+        .form-control:focus {
+            background-color: #000;
+            color: #0f0;
+            border-color: #0f0;
+            box-shadow: 0 0 8px #0f0;
+        }
+        .btn-primary {
+            background-color: #000;
+            color: #0f0;
+            border: 1px solid #0f0;
+            box-shadow: 0 0 5px #0f0;
+            text-shadow: none;
+        }
+        .btn-primary:hover {
+            background-color: #000;
+            color: #0ff;
+            border-color: #0ff;
+            box-shadow: 0 0 8px #0ff;
+        }
+        .result-box {
+            margin-top: 2rem;
+            padding: 1rem;
+            border: 1px solid #0f0;
+            border-radius: 0;
+            box-shadow: 0 0 8px #0f0;
+            background-color: rgba(0,0,0,0.5);
+        }
+        table {
+            color: #0f0;
+        }
+        table th, table td {
+            border: 1px solid #0f0;
+        }
+       thead {
+            background-color: rgba(0,0,0,0.7);
+        }
+        .alert-danger {
+            background-color: rgba(139,0,0,0.5);
+            color: #f00;
+            border: 1px solid #f00;
+            box-shadow: 0 0 5px #f00;
+        }
+        small.text-muted {
+            color: #0f0;
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
@@ -45,7 +109,7 @@
             <p><strong>Found:</strong> {{ results|length }} subdomains</p>
             {% if results %}
             <table class="table table-sm table-bordered mt-3">
-                <thead class="table-light">
+                <thead>
                     <tr>
                         <th>Subdomain</th>
                         <th>IP Address</th>
