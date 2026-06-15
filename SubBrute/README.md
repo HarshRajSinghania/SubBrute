@@ -32,5 +32,20 @@ The wordlist should contain one subdomain prefix per line (e.g., www, mail, ftp,
 python subbrute.py -d google.com -w wordlist.txt
 ```
 
+## Web Interface
+To run the web interface:
+
+```bash
+python app.py
+```
+
+Then open your browser to `http://localhost:5000`.
+
+The web interface allows you to:
+- Enter a target domain
+- Optionally upload a custom wordlist (otherwise uses the default wordlist.txt)
+- Configure number of threads and timeout
+- View results in a table
+
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
